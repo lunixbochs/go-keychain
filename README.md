@@ -9,7 +9,7 @@ Usage
 ----
 
 ```Go
-import "github.com/lunixbochs/keychain"
+import "github.com/lunixbochs/go-keychain"
 
 func main() {
   keychain.Add("test service", "username", "password")
