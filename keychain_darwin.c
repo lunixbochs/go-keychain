@@ -13,12 +13,17 @@ char *get_error(OSStatus status) {
 
 char *keychain_add_internet(char *service, char *domain, char *account,
       char *path, int port, int protocol, int auth_mech, char *pass) {
+    int domain_length = strlen(domain);
+    int path_length = strlen(path);
+    if(domain_length == 0) domain = NULL;
+    if(path_length == 0) path = NULL;
+
     OSStatus status = SecKeychainAddInternetPassword(
         NULL,
         strlen(service), service,
-        strlen(domain), domain,
+        domain_length, domain,
         strlen(account), account,
-        strlen(path), path,
+        path_length, path,
         port, protocol, auth_mech,
         strlen(pass), pass,
         NULL
@@ -46,12 +51,17 @@ char *keychain_find_internet(char *service, char *domain, char *account, char *p
     }
     SecKeychainItemRef item;
     char *tmp;
+    int domain_length = strlen(domain);
+    int path_length = strlen(path);
+    if(domain_length == 0) domain = NULL;
+    if(path_length == 0) path = NULL;
+
     OSStatus status = SecKeychainFindInternetPassword(
         NULL, // keychain, NULL is user's
         strlen(service), service, // service (aka hostname)
-        strlen(domain), domain, // length and securityDomain, NULL to ignore
+        domain_length, domain, // length and securityDomain, NULL to ignore
         strlen(account), account, // account (aka username)
-        strlen(path), path, // length and path, NULL to ignore
+        path_length, path, // length and path, NULL to ignore
         port, // TCP port number, 0 to ignore
         protocol, // protocol (eg https, ssh), "TypeAny" is wildcard
         auth_mech, // auth mechanism, eg HTTP Basic or NTLM
@@ -107,12 +117,18 @@ char *keychain_remove_generic(char *service, char *account) {
 
 char *keychain_remove_internet(char *service, char *domain, char *account, char *path, int port, int protocol, int auth_mech) {
     SecKeychainItemRef item;
+
+    int domain_length = strlen(domain);
+    int path_length = strlen(path);
+    if(domain_length == 0) domain = NULL;
+    if(path_length == 0) path = NULL;
+
     OSStatus status = SecKeychainFindInternetPassword(
         NULL, // keychain, NULL is user's
         strlen(service), service, // service (aka hostname)
-        strlen(domain), domain, // length and securityDomain, NULL to ignore
+        domain_length, domain, // length and securityDomain, NULL to ignore
         strlen(account), account, // account (aka username)
-        strlen(path), path, // length and path, NULL to ignore
+        path_length, path, // length and path, NULL to ignore
         port, // TCP port number, 0 to ignore
         protocol, // protocol (eg https, ssh), "TypeAny" is wildcard
         auth_mech, // auth mechanism, eg HTTP Basic or NTLM
