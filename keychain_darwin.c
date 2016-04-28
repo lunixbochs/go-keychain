@@ -23,7 +23,35 @@ char *keychain_add(char *service, char *account, char *pass) {
     return NULL;
 }
 
-char *keychain_find(char *service, char *account, unsigned int *length, char **password) {
+
+char *keychain_find_internet(char *service, char *account, unsigned int *length, char **password) {
+    if (length == NULL || password == NULL) {
+        return strdup("length == NULL || password == NULL");
+    }
+    SecKeychainItemRef item;
+    char *tmp;
+    OSStatus status = SecKeychainFindInternetPassword(
+        NULL, // keychain, NULL is user's
+        strlen(service), service, // service (aka hostname)
+        0, NULL, // length and securityDomain, NULL to ignore
+        strlen(account), account, // account (aka username)
+        0, NULL, // length and path, NULL to ignore
+        0, // TCP port number, 0 to ignore
+        kSecProtocolTypeAny, // protocol (eg https, ssh), "TypeAny" is wildcard
+        kSecAuthenticationTypeAny, // auth mechanism, eg HTTP Basic or NTLM
+        length, (void **)&tmp,
+        NULL
+    );
+    if (status) {
+        *length = 0;
+        return get_error(status);
+    }
+    *password = strdup(tmp);
+    SecKeychainItemFreeContent(NULL, tmp);
+    return NULL;
+}
+
+char *keychain_find_generic(char *service, char *account, unsigned int *length, char **password) {
     if (length == NULL || password == NULL) {
         return strdup("length == NULL || password == NULL");
     }

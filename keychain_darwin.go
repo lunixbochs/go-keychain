@@ -12,7 +12,8 @@ import (
 #include <stdlib.h>
 
 extern char *keychain_add(char *service, char *account, char *pass);
-extern char *keychain_find(char *service, char *account, unsigned int *length, char **password);
+extern char *keychain_find_internet(char *service, char *account, unsigned int *length, char **password);
+extern char *keychain_find_generic(char *service, char *account, unsigned int *length, char **password);
 extern char *keychain_remove(char *service, char *account);
 */
 import "C"
@@ -30,7 +31,7 @@ func Find(service, account string) (string, error) {
 	var length C.uint
 	var password *C.char
 
-	errMsg := C.keychain_find(C.CString(service), C.CString(account), &length, &password)
+	errMsg := C.keychain_find_internet(C.CString(service), C.CString(account), &length, &password)
 	defer C.free(unsafe.Pointer(password))
 	if errMsg != nil {
 		defer C.free(unsafe.Pointer(errMsg))
