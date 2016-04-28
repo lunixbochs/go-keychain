@@ -27,6 +27,11 @@ extern char *keychain_remove_internet(char *service, char *domain, char *account
 */
 import "C"
 
+/*
+as of 2016-04-27, constants cribbed from...
+http://opensource.apple.com/source/libsecurity_keychain/libsecurity_keychain-34101/lib/SecKeychain.h
+*/
+
 var auth_mechs = map[string]int{
 	"ntlm":     C.kSecAuthenticationTypeNTLM,
 	"msn":      C.kSecAuthenticationTypeMSN,
