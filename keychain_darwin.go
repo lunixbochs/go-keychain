@@ -98,9 +98,14 @@ func Add(service, account, pass string) error {
 func AddInternetPassword(service string, account string, domain string,
 	path string, port int, protocol string,
 	auth_mech string, pass string) error {
-	errMsg := C.keychain_add_internet(C.CString(service), C.CString(domain),
-		C.CString(account), C.CString(path), C.int(port), 0,
-		C.kSecAuthenticationTypeDefault, C.CString(pass))
+	errMsg := C.keychain_add_internet(C.CString(service),
+		C.CString(domain),
+		C.CString(account),
+		C.CString(path),
+		C.int(port),
+		C.int(protocols[strings.ToLower(protocol)]),
+		C.int(auth_mechs[strings.ToLower(auth_mech)]),
+		C.CString(pass))
 	if errMsg != nil {
 		defer C.free(unsafe.Pointer(errMsg))
 		return errors.New(C.GoString(errMsg))
