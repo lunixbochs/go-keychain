@@ -162,7 +162,7 @@ func Remove(service, account string) error {
 
 func RemoveInternetPassword(service string, account string, domain string,
 	path string, port int, protocol string,
-	auth_mech string, pass string) error {
+	auth_mech string) error {
 	errMsg := C.keychain_remove_internet(C.CString(service),
 		C.CString(domain),
 		C.CString(account),
