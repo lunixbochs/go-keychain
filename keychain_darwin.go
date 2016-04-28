@@ -2,8 +2,8 @@ package keychain
 
 import (
 	"errors"
-	"unsafe"
 	"strings"
+	"unsafe"
 )
 
 /*
@@ -27,63 +27,63 @@ extern char *keychain_remove_internet(char *service, char *domain, char *account
 */
 import "C"
 
-var auth_mechs = map[string]int {
-	"ntlm": 		C.kSecAuthenticationTypeNTLM,
-	"msn":			C.kSecAuthenticationTypeMSN,
-	"msna":			C.kSecAuthenticationTypeMSN,
-	"dpa":			C.kSecAuthenticationTypeDPA,
-	"dpaa":			C.kSecAuthenticationTypeDPA,
-	"rpa":			C.kSecAuthenticationTypeRPA,
-	"rpaa":			C.kSecAuthenticationTypeRPA,
-	"basic":		C.kSecAuthenticationTypeHTTPBasic,
-	"http":			C.kSecAuthenticationTypeHTTPBasic,
-	"digest":		C.kSecAuthenticationTypeHTTPDigest,
-	"httd":			C.kSecAuthenticationTypeHTTPDigest,
-	"htmlform":	C.kSecAuthenticationTypeHTMLForm,
-	"form":			C.kSecAuthenticationTypeHTMLForm,
-	"default":	C.kSecAuthenticationTypeDefault,
-	"any":			C.kSecAuthenticationTypeAny,
-	"*":				C.kSecAuthenticationTypeAny,
-	"":					C.kSecAuthenticationTypeAny,
+var auth_mechs = map[string]int{
+	"ntlm":     C.kSecAuthenticationTypeNTLM,
+	"msn":      C.kSecAuthenticationTypeMSN,
+	"msna":     C.kSecAuthenticationTypeMSN,
+	"dpa":      C.kSecAuthenticationTypeDPA,
+	"dpaa":     C.kSecAuthenticationTypeDPA,
+	"rpa":      C.kSecAuthenticationTypeRPA,
+	"rpaa":     C.kSecAuthenticationTypeRPA,
+	"basic":    C.kSecAuthenticationTypeHTTPBasic,
+	"http":     C.kSecAuthenticationTypeHTTPBasic,
+	"digest":   C.kSecAuthenticationTypeHTTPDigest,
+	"httd":     C.kSecAuthenticationTypeHTTPDigest,
+	"htmlform": C.kSecAuthenticationTypeHTMLForm,
+	"form":     C.kSecAuthenticationTypeHTMLForm,
+	"default":  C.kSecAuthenticationTypeDefault,
+	"any":      C.kSecAuthenticationTypeAny,
+	"*":        C.kSecAuthenticationTypeAny,
+	"":         C.kSecAuthenticationTypeAny,
 }
 
-var protocols = map[string]int {
-	"ftp": 				C.kSecProtocolTypeFTP,
-	"http": 			C.kSecProtocolTypeHTTP,
-	"irc": 				C.kSecProtocolTypeIRC,
-	"nntp": 			C.kSecProtocolTypeNNTP,
-	"pop3": 			C.kSecProtocolTypePOP3,
-	"smtp": 			C.kSecProtocolTypeSMTP,
-	"socks": 			C.kSecProtocolTypeSOCKS,
-	"imap": 			C.kSecProtocolTypeIMAP,
-	"ldap": 			C.kSecProtocolTypeLDAP,
-	"appletalk": 	C.kSecProtocolTypeAppleTalk,
-	"afp": 				C.kSecProtocolTypeAFP,
-	"telnet": 		C.kSecProtocolTypeTelnet,
-	"ssh": 				C.kSecProtocolTypeSSH,
-	"ftps": 			C.kSecProtocolTypeFTPS,
-	"https": 			C.kSecProtocolTypeHTTPS,
-	"httpproxy": 	C.kSecProtocolTypeHTTPProxy,
+var protocols = map[string]int{
+	"ftp":        C.kSecProtocolTypeFTP,
+	"http":       C.kSecProtocolTypeHTTP,
+	"irc":        C.kSecProtocolTypeIRC,
+	"nntp":       C.kSecProtocolTypeNNTP,
+	"pop3":       C.kSecProtocolTypePOP3,
+	"smtp":       C.kSecProtocolTypeSMTP,
+	"socks":      C.kSecProtocolTypeSOCKS,
+	"imap":       C.kSecProtocolTypeIMAP,
+	"ldap":       C.kSecProtocolTypeLDAP,
+	"appletalk":  C.kSecProtocolTypeAppleTalk,
+	"afp":        C.kSecProtocolTypeAFP,
+	"telnet":     C.kSecProtocolTypeTelnet,
+	"ssh":        C.kSecProtocolTypeSSH,
+	"ftps":       C.kSecProtocolTypeFTPS,
+	"https":      C.kSecProtocolTypeHTTPS,
+	"httpproxy":  C.kSecProtocolTypeHTTPProxy,
 	"httpsproxy": C.kSecProtocolTypeHTTPSProxy,
-	"ftpproxy": 	C.kSecProtocolTypeFTPProxy,
-	"cifs": 			C.kSecProtocolTypeCIFS,
-	"smb": 				C.kSecProtocolTypeSMB,
-	"rtsp": 			C.kSecProtocolTypeRTSP,
-	"rtspproxy":	C.kSecProtocolTypeRTSPProxy,
-	"daap": 			C.kSecProtocolTypeDAAP,
-	"eppc": 			C.kSecProtocolTypeEPPC,
-	"ipp": 				C.kSecProtocolTypeIPP,
-	"nntps": 			C.kSecProtocolTypeNNTPS,
-	"ldaps": 			C.kSecProtocolTypeLDAPS,
-	"telnets": 		C.kSecProtocolTypeTelnetS,
-	"imaps": 			C.kSecProtocolTypeIMAPS,
-	"ircs": 			C.kSecProtocolTypeIRCS,
-	"pop3s": 			C.kSecProtocolTypePOP3S,
+	"ftpproxy":   C.kSecProtocolTypeFTPProxy,
+	"cifs":       C.kSecProtocolTypeCIFS,
+	"smb":        C.kSecProtocolTypeSMB,
+	"rtsp":       C.kSecProtocolTypeRTSP,
+	"rtspproxy":  C.kSecProtocolTypeRTSPProxy,
+	"daap":       C.kSecProtocolTypeDAAP,
+	"eppc":       C.kSecProtocolTypeEPPC,
+	"ipp":        C.kSecProtocolTypeIPP,
+	"nntps":      C.kSecProtocolTypeNNTPS,
+	"ldaps":      C.kSecProtocolTypeLDAPS,
+	"telnets":    C.kSecProtocolTypeTelnetS,
+	"imaps":      C.kSecProtocolTypeIMAPS,
+	"ircs":       C.kSecProtocolTypeIRCS,
+	"pop3s":      C.kSecProtocolTypePOP3S,
 	"cvspserver": C.kSecProtocolTypeCVSpserver,
-	"svn": 				C.kSecProtocolTypeSVN,
-	"any": 				C.kSecProtocolTypeAny,
-	"*": 					C.kSecProtocolTypeAny,
-	"": 					C.kSecProtocolTypeAny,
+	"svn":        C.kSecProtocolTypeSVN,
+	"any":        C.kSecProtocolTypeAny,
+	"*":          C.kSecProtocolTypeAny,
+	"":           C.kSecProtocolTypeAny,
 }
 
 func Add(service, account, pass string) error {
@@ -96,8 +96,8 @@ func Add(service, account, pass string) error {
 }
 
 func AddInternetPassword(service string, account string, domain string,
-		path string, port int, protocol string,
-		auth_mech string, pass string) error {
+	path string, port int, protocol string,
+	auth_mech string, pass string) error {
 	errMsg := C.keychain_add_internet(C.CString(service), C.CString(domain),
 		C.CString(account), C.CString(path), C.int(port), 0,
 		C.kSecAuthenticationTypeDefault, C.CString(pass))
@@ -123,8 +123,8 @@ func Find(service, account string) (string, error) {
 }
 
 func FindInternetPassword(service string, account string, domain string,
-		path string, port int, protocol string,
-		auth_mech string) (string, error) {
+	path string, port int, protocol string,
+	auth_mech string) (string, error) {
 
 	var length C.uint
 	var password *C.char
@@ -156,8 +156,8 @@ func Remove(service, account string) error {
 }
 
 func RemoveInternetPassword(service string, account string, domain string,
-		path string, port int, protocol string,
-		auth_mech string, pass string) error {
+	path string, port int, protocol string,
+	auth_mech string, pass string) error {
 	errMsg := C.keychain_remove_internet(C.CString(service),
 		C.CString(domain),
 		C.CString(account),
