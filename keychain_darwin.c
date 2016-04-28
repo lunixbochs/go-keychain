@@ -11,7 +11,23 @@ char *get_error(OSStatus status) {
     return buf;
 }
 
-char *keychain_add(char *service, char *account, char *pass) {
+char *keychain_add_internet(char *service, char *domain, char *account,
+      char *path, int port, int protocol, int auth_mech, char *pass) {
+    OSStatus status = SecKeychainAddInternetPassword(
+        NULL,
+        strlen(service), service,
+        strlen(domain), domain,
+        strlen(account), account,
+        strlen(path), path,
+        port, protocol, auth_mech,
+        strlen(pass), pass,
+        NULL
+    );
+    if (status) return get_error(status);
+    return NULL;
+}
+
+char *keychain_add_generic(char *service, char *account, char *pass) {
     OSStatus status = SecKeychainAddGenericPassword(
         NULL,
         strlen(service), service,
@@ -24,7 +40,7 @@ char *keychain_add(char *service, char *account, char *pass) {
 }
 
 
-char *keychain_find_internet(char *service, char *account, unsigned int *length, char **password) {
+char *keychain_find_internet(char *service, char *domain, char *account, char *path, int port, int protocol, int auth_mech, unsigned int *length, char **password) {
     if (length == NULL || password == NULL) {
         return strdup("length == NULL || password == NULL");
     }
@@ -33,12 +49,12 @@ char *keychain_find_internet(char *service, char *account, unsigned int *length,
     OSStatus status = SecKeychainFindInternetPassword(
         NULL, // keychain, NULL is user's
         strlen(service), service, // service (aka hostname)
-        0, NULL, // length and securityDomain, NULL to ignore
+        strlen(domain), domain, // length and securityDomain, NULL to ignore
         strlen(account), account, // account (aka username)
-        0, NULL, // length and path, NULL to ignore
-        0, // TCP port number, 0 to ignore
-        kSecProtocolTypeAny, // protocol (eg https, ssh), "TypeAny" is wildcard
-        kSecAuthenticationTypeAny, // auth mechanism, eg HTTP Basic or NTLM
+        strlen(path), path, // length and path, NULL to ignore
+        port, // TCP port number, 0 to ignore
+        protocol, // protocol (eg https, ssh), "TypeAny" is wildcard
+        auth_mech, // auth mechanism, eg HTTP Basic or NTLM
         length, (void **)&tmp,
         NULL
     );
@@ -73,12 +89,33 @@ char *keychain_find_generic(char *service, char *account, unsigned int *length, 
     return NULL;
 }
 
-char *keychain_remove(char *service, char *account) {
+char *keychain_remove_generic(char *service, char *account) {
     SecKeychainItemRef item;
     OSStatus status = SecKeychainFindGenericPassword(
         NULL,
         strlen(service), service,
         strlen(account), account,
+        NULL, NULL,
+        &item
+    );
+    if (status) return get_error(status);
+
+    status = SecKeychainItemDelete(item);
+    if (status) return get_error(status);
+    return NULL;
+}
+
+char *keychain_remove_internet(char *service, char *domain, char *account, char *path, int port, int protocol, int auth_mech) {
+    SecKeychainItemRef item;
+    OSStatus status = SecKeychainFindInternetPassword(
+        NULL, // keychain, NULL is user's
+        strlen(service), service, // service (aka hostname)
+        strlen(domain), domain, // length and securityDomain, NULL to ignore
+        strlen(account), account, // account (aka username)
+        strlen(path), path, // length and path, NULL to ignore
+        port, // TCP port number, 0 to ignore
+        protocol, // protocol (eg https, ssh), "TypeAny" is wildcard
+        auth_mech, // auth mechanism, eg HTTP Basic or NTLM
         NULL, NULL,
         &item
     );
