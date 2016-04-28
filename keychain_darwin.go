@@ -28,9 +28,21 @@ extern char *keychain_remove_internet(char *service, char *domain, char *account
 import "C"
 
 var auth_mechs = map[string]int {
-	"ntlm": C.kSecAuthenticationTypeNTLM,
-	"default": C.kSecAuthenticationTypeDefault,
-	"any": C.kSecAuthenticationTypeAny,
+	"ntlm": 		C.kSecAuthenticationTypeNTLM,
+	"msn":			C.kSecAuthenticationTypeMSN,
+	"msna":			C.kSecAuthenticationTypeMSN,
+	"dpa":			C.kSecAuthenticationTypeDPA,
+	"dpaa":			C.kSecAuthenticationTypeDPA,
+	"rpa":			C.kSecAuthenticationTypeRPA,
+	"rpaa":			C.kSecAuthenticationTypeRPA,
+	"basic":		C.kSecAuthenticationTypeHTTPBasic,
+	"http":			C.kSecAuthenticationTypeHTTPBasic,
+	"digest":		C.kSecAuthenticationTypeHTTPDigest,
+	"httd":			C.kSecAuthenticationTypeHTTPDigest,
+	"htmlform":	C.kSecAuthenticationTypeHTMLForm,
+	"form":			C.kSecAuthenticationTypeHTMLForm,
+	"default":	C.kSecAuthenticationTypeDefault,
+	"any":			C.kSecAuthenticationTypeAny,
 }
 
 var protocols = map[string]int {
