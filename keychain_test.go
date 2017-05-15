@@ -1,8 +1,6 @@
 package keychain
 
-import (
-	"testing"
-)
+import "testing"
 
 var app = "github.com/lunixbochs/go-keychain/test"
 
@@ -23,7 +21,7 @@ func TestFlow(t *testing.T) {
 		t.Fatal(err)
 	}
 	pass, err = Find(app, "testuser")
-	if err == nil || pass != "" {
+	if err == nil || err.Error() != "The specified item could not be found in the keychain." || pass != "" {
 		t.Fatal("password remove failed")
 	}
 }
