@@ -21,7 +21,11 @@ func TestFlow(t *testing.T) {
 		t.Fatal(err)
 	}
 	pass, err = Find(app, "testuser")
-	if err == nil || err.Error() != "The specified item could not be found in the keychain." || pass != "" {
+	if err == nil || pass != "" {
 		t.Fatal("password remove failed")
+	}
+	strErr := err.Error()
+	if strErr == "" || strErr == "Unknown error" {
+		t.Fatal("problem exporting error message")
 	}
 }
