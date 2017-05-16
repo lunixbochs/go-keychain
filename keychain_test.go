@@ -1,8 +1,6 @@
 package keychain
 
-import (
-	"testing"
-)
+import "testing"
 
 var app = "github.com/lunixbochs/go-keychain/test"
 
@@ -25,5 +23,9 @@ func TestFlow(t *testing.T) {
 	pass, err = Find(app, "testuser")
 	if err == nil || pass != "" {
 		t.Fatal("password remove failed")
+	}
+	strErr := err.Error()
+	if strErr == "" || strErr == "Unknown error" {
+		t.Fatal("problem exporting error message")
 	}
 }
